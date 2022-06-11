@@ -1,0 +1,51 @@
+{
+  "name": "zuvy-wallet",
+  "version": "1.0.0",
+  "description": "A small financial technology wallet app where users can fund their wallets, and send & receive funds from other wallet users.",
+  "main": "server.js",
+  "scripts": {
+    "lint": "eslint . --fix",
+    "start": "rm -rf dist/ && tsc --project . && node dist/server.js",
+    "postinstall": "npx prisma generate && npx prisma migrate deploy",
+    "migrate:deploy": "npx prisma generate && npx prisma migrate deploy",
+    "dev": "nodemon .",
+    "prisma:gui": "npx prisma studio --port 5555 --browser chrome",
+    "migration": "npx prisma migrate dev",
+    "generate": "npx prisma generate",
+    "migrate": "npm run generate && npm run migration",
+    "prepare": "husky install",
+    "format": "prettier --write \"**/*.ts\""
+  },
+  "author": "Kenneth Jimmy",
+  "license": "ISC",
+  "devDependencies": {
+    "@tsconfig/node16": "^1.0.3",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^17.0.42",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.2",
+    "husky": "^8.0.1",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.6.2",
+    "prisma": "^3.15.1",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.15.1",
+    "@types/cookie-parser": "^1.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "express-rate-limit": "^6.4.0",
+    "helmet": "^5.1.0",
+    "morgan": "^1.10.0",
+    "v-response": "^1.1.0",
+    "xss-clean": "^0.1.1"
+  }
+}
