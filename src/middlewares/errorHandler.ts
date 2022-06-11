@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
 
 const sendErrorDev = (err: AppError, res: Response) => {
@@ -29,7 +29,7 @@ const sendErrorProd = (err: AppError, res: Response) => {
   }
 };
 
-export default (err: AppError, req: Request, res: Response) => {
+export default (err: AppError, req: Request, res: Response, next: NextFunction) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 

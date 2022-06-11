@@ -4,13 +4,15 @@ import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
 
 import ApiVersions from './api/index';
 import errorHandler from './middlewares/errorHandler';
 import AppError from './utils/appError';
 
-const app = express();
+dotenv.config();
 
+const app = express();
 
   app.use(cors());
 
@@ -52,5 +54,6 @@ const app = express();
   const PORT = process.env.PORT || 5000;
 
   app.listen(PORT).on('listening', () => {
+    console.log(`App is in ${process.env.NODE_ENV} mode.`)
     console.log(`💘 app is listening on ${PORT} 🚀`);
   });
