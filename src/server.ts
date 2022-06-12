@@ -14,46 +14,45 @@ dotenv.config();
 
 const app = express();
 
-  app.use(cors());
+app.use(cors());
 
-  app.use(helmet());
+app.use(helmet());
 
-  app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP. Try again in 15 mins.',
+  }),
+);
 
-    app.use(
-      rateLimit({
-        windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 100, // limit each IP to 100 requests per windowMs
-        message: 'Too many requests from this IP. Try again in 15 mins.',
-      }),
-    );
+// logger middleware
+app.use(morgan('combined'));
 
-  // logger middleware
-  app.use(morgan('combined'));
+// Add middlewares for parsing JSON and urlencoded data and populating `req.body`
+app.use(express.urlencoded({ extended: false }));
 
-  // Add middlewares for parsing JSON and urlencoded data and populating `req.body`
-  app.use(express.urlencoded({ extended: false }));
+// parse requests of content-type - application/json
+app.use(express.json());
+app.use(cookieParser());
 
-  // parse requests of content-type - application/json
-  app.use(express.json());
-  app.use(cookieParser());
+app.get('/', (_, res) => {
+  res.json({ message: 'Welcome to the Zuvy Wallet.' });
+});
 
-  app.get('/', (_, res) => {
-    res.json({ message: 'Welcome to the Zuvy Wallet.' });
-  });
+app.use('/api', ApiVersions);
 
-  app.use('/api', ApiVersions);
+app.all('*', (req, _, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
 
-  app.all('*', (req, _, next) => {
-    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-  });
+app.use(errorHandler);
 
-  app.use(errorHandler);
+const PORT = process.env.PORT || 5000;
 
-  const PORT = process.env.PORT || 5000;
-
-  app.listen(PORT).on('listening', () => {
-    console.log(`App is in ${process.env.NODE_ENV} mode.`)
-    console.log(`💘 app is listening on ${PORT} 🚀`);
-  });
+app.listen(PORT).on('listening', () => {
+  console.log(`App is in ${process.env.NODE_ENV} mode.`);
+  console.log(`💘 app is listening on ${PORT} 🚀`);
+});

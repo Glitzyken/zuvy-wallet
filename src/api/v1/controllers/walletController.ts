@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
 class WalletController {
-    public async createWallet(req: Request, res: Response) {
-        console.log('Creating wallet...')
+  public async createWallet(req: Request, res: Response) {
+    console.log('Creating wallet...');
 
-        res.status(201).json({
-        status: 'success',
-        });
-    }
+    res.status(201).json({
+      status: 'success',
+    });
+  }
 }
 
 export default WalletController;

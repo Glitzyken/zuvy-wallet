@@ -4,7 +4,7 @@ import WalletController from '../controllers/walletController';
 
 const router = express.Router();
 
-const controller = new WalletController;
+const controller = new WalletController();
 
 router.route('/').post(controller.createWallet);
 
