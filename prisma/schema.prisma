@@ -20,8 +20,8 @@ model User {
   password        String
   passwordConfirm String
 
-  wallet   Wallet @relation(fields: [walletId], references: [id])
-  walletId Int    @unique
+  wallet   Wallet @relation(fields: [walletId], references: [uid])
+  walletId String @unique
 
   transactions Transaction[]
 

@@ -1,12 +1,18 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { UserInterface } from '../utils/interfaces';
 
 const signToken = (id: string) =>
   jwt.sign({ id }, process.env.JWT_SECRET as string, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-export default (user: any, statusCode: number, req: Request, res: Response) => {
+export default (
+  user: UserInterface,
+  statusCode: number,
+  req: Request,
+  res: Response,
+) => {
   const token = signToken(user.uid);
 
   res.cookie('jwt', token, {
