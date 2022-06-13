@@ -10,6 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TRANSACTION_STATUS {
+  PENDING
+  SUCCESS
+  DECLINED
+}
+
 model User {
   id  Int    @id @default(autoincrement())
   uid String @unique @default(uuid())
@@ -20,8 +26,7 @@ model User {
   password        String
   passwordConfirm String?
 
-  wallet   Wallet? @relation(fields: [walletId], references: [uid])
-  walletId String? @unique
+  wallet Wallet?
 
   transactions Transaction[]
 
@@ -33,10 +38,11 @@ model Wallet {
   id  Int    @id @default(autoincrement())
   uid String @unique @default(uuid())
 
-  user     User?
-  userId   String?
+  user   User?   @relation(fields: [userId], references: [uid])
+  userId String? @unique
+
   walletId String
-  balance  Int     @default(10000000) // In Kobo
+  balance  Int    @default(10000000) // In Kobo
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -48,14 +54,13 @@ model Transaction {
 
   type   String
   amount Int
-  date   DateTime
-  status String
+  date   DateTime           @default(now())
+  status TRANSACTION_STATUS @default(PENDING)
 
   userId String
   user   User   @relation(fields: [userId], references: [uid])
 
   receiverDetails Json
 
-  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

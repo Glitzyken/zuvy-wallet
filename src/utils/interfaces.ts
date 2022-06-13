@@ -16,5 +16,6 @@ export interface UserInterface {
 }
 
 export interface FundWallet {
-  topUp: number;
+  topUp?: number;
+  walletId?: string;
 }

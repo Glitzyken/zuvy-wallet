@@ -12,8 +12,10 @@ const controller = new WalletController();
 
 router.use(catchAsync(protect));
 router
-  .route('/fund')
+  .route('/fund-my-wallet')
   .patch(topUp, validationResults, catchAsync(controller.fundWallet));
+
+router.route('/find-user/:walletId').get(catchAsync(controller.findWalletUser));
 
 // Typical Admin routes
 router.route('/').get(catchAsync(controller.getAllWallets));
