@@ -12,10 +12,18 @@ export interface UserInterface {
   email: string;
   password: string | undefined;
   passwordConfirm: string | undefined;
+}
+
+export interface WalletInterface {
+  id: number;
+  uid: string;
+  userId: string;
   walletId: string;
+  balance: number;
 }
 
 export interface FundWallet {
   topUp?: number;
   walletId?: string;
+  amount?: number;
 }

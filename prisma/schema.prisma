@@ -16,6 +16,11 @@ enum TRANSACTION_STATUS {
   DECLINED
 }
 
+enum TRANSACTION_TYPE {
+  TRANSFER
+  REFUND
+}
+
 model User {
   id  Int    @id @default(autoincrement())
   uid String @unique @default(uuid())
@@ -52,7 +57,7 @@ model Transaction {
   id  Int    @id @default(autoincrement())
   uid String @unique @default(uuid())
 
-  type   String
+  type   TRANSACTION_TYPE   @default(TRANSFER)
   amount Int
   date   DateTime           @default(now())
   status TRANSACTION_STATUS @default(PENDING)

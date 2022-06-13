@@ -7,21 +7,24 @@ import AppError from '../../../utils/appError';
 
 const prisma = new PrismaClient();
 const Wallet = prisma.wallet;
+const Transaction = prisma.transaction;
 
 class WalletController {
-  public async fundWallet(req: RequestInterface, res: Response) {
+  public async fundMyWallet(req: RequestInterface, res: Response) {
     const { topUp }: FundWallet = req.body;
-    
-    const wallet: any = await Wallet.findFirst({
+
+    const wallet = await Wallet.findFirst({
       where: { userId: req.user.uid },
     });
 
     let balance;
 
-    if (topUp) {
-      const amount = convertToKobo(topUp);
+    if (wallet) {
+      if (topUp) {
+        const amountInKobo = convertToKobo(topUp);
 
-      balance = wallet?.balance + amount;
+        balance = wallet?.balance + amountInKobo;
+      }
     }
 
     const walletFunded = await Wallet.update({
@@ -37,29 +40,103 @@ class WalletController {
     });
   }
 
-  public async findWalletUser(req: Request, res: Response, next: NextFunction) {
-    const { walletId }: FundWallet = req.params;
+  public async transferFund(
+    req: RequestInterface,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const { amount, walletId }: FundWallet = req.body;
 
-    const wallet: any = await Wallet.findFirst({
+    const senderWallet = await Wallet.findFirst({
+      where: { userId: req.user.uid },
+    });
+    const receiverWallet = await Wallet.findFirst({
       where: { walletId },
       include: { user: true },
     });
 
-    if (!wallet) {
+    // check if sender's wallet balance is sufficient
+    if (senderWallet && receiverWallet) {
+      if (typeof amount === 'number') {
+        const amountInKobo: number = convertToKobo(amount);
+
+        if (senderWallet.balance < amountInKobo) {
+          return next(new AppError('Your balance is insufficient.', 400));
+        }
+
+        // debit sender's wallet and credit receiver's wallet
+        const newSenderBalance = senderWallet?.balance - amountInKobo;
+        const newReceiverBalance = receiverWallet?.balance + amountInKobo;
+
+        const updatedSenderWallet = await Wallet.update({
+          where: { uid: senderWallet.uid },
+          data: { balance: newSenderBalance },
+        });
+
+        await Wallet.update({
+          where: { uid: receiverWallet.uid },
+          data: { balance: newReceiverBalance },
+        });
+
+        // create a new transaction record
+        const receiverDetails = {
+          name: `${receiverWallet.user?.firstName} ${receiverWallet.user?.lastName}`,
+          email: receiverWallet.user?.email,
+        };
+
+        await Transaction.create({
+          data: {
+            amount: amountInKobo,
+            userId: req.user.uid,
+            receiverDetails,
+          },
+        });
+
+        // respond with the sender's current wallet (+balance)
+        res.status(200).json({
+          status: 'success',
+          data: {
+            updatedSenderWallet,
+          },
+        });
+      }
+    } else {
+      return next(
+        new AppError(
+          'No wallet found. Please, check that the walled ID is valid.',
+          404,
+        ),
+      );
+    }
+  }
+
+  public async findWalletUser(req: Request, res: Response, next: NextFunction) {
+    const { walletId }: FundWallet = req.params;
+
+    const wallet = await Wallet.findFirst({
+      where: { walletId },
+      include: { user: true },
+    });
+
+    if (wallet) {
+      let walletUser;
+
+      if (wallet.user) {
+        walletUser = {
+          firstName: wallet.user.firstName,
+          lastName: wallet.user.lastName,
+        };
+      }
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          walletUser,
+        },
+      });
+    } else {
       return next(new AppError('No wallet user found.', 404));
     }
-
-    const walletUser = {
-      firstName: wallet.user.firstName,
-      lastName: wallet.user.lastName,
-    };
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        walletUser,
-      },
-    });
   }
 
   public async getAllWallets(req: Request, res: Response) {
