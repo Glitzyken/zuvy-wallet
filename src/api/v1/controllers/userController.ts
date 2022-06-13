@@ -6,6 +6,7 @@ import walletIdGenerator from '../../../utils/walletIdGenerator';
 
 const prisma = new PrismaClient();
 const User = prisma.user;
+const Wallet = prisma.wallet;
 
 class UserController {
   public async signup(req: Request, res: Response) {
@@ -16,14 +17,19 @@ class UserController {
       lastName: req.body.lastName,
       email: req.body.email.toLowerCase(),
       password: req.body.password,
-      wallet: {
-        create: {
-          walletId,
-        },
-      },
     };
 
     const user = await User.create({ data });
+
+    // create a new wallet for the user
+    if (user) {
+      await Wallet.create({
+        data: {
+          userId: user.uid,
+          walletId,
+        },
+      });
+    }
 
     createSendToken(user, 201, req, res);
   }

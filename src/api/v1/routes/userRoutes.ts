@@ -2,7 +2,6 @@ import express from 'express';
 
 import UserController from '../controllers/userController';
 import catchAsync from '../../../utils/catchAsync';
-
 import * as userValidations from '../../../middlewares/validations/userValidation';
 import validationResults from '../../../middlewares/validations/validationResults';
 import getMe from '../../../middlewares/getMe';

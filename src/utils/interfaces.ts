@@ -14,3 +14,7 @@ export interface UserInterface {
   passwordConfirm: string | undefined;
   walletId: string;
 }
+
+export interface FundWallet {
+  topUp: number;
+}

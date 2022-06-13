@@ -1,7 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 
-import { promisify } from 'util';
-import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import { NextFunction, Response } from 'express';
 import { RequestInterface } from '../utils/interfaces';

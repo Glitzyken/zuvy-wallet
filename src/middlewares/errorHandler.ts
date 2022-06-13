@@ -2,6 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
 
 const sendErrorDev = (err: AppError, res: Response) => {
+  console.error(
+    '🔥🔥🔥🔥🔥______________LOGGING ERROR_______________________🔥🔥🔥🔥🔥🔥',
+    { err },
+  );
+
   res.status(err.statusCode).json({
     error: err,
     message: err.message,
@@ -17,7 +22,7 @@ const sendErrorProd = (err: AppError, res: Response) => {
     });
   } else {
     // Programming or other unknown error: don't leak error details
-    console.log(
+    console.error(
       '🔥🔥🔥🔥🔥______________LOGGING ERROR_______________________🔥🔥🔥🔥🔥🔥',
       { err },
     );

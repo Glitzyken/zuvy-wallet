@@ -20,8 +20,8 @@ model User {
   password        String
   passwordConfirm String?
 
-  wallet   Wallet @relation(fields: [walletId], references: [uid])
-  walletId String @unique
+  wallet   Wallet? @relation(fields: [walletId], references: [uid])
+  walletId String? @unique
 
   transactions Transaction[]
 
@@ -34,8 +34,9 @@ model Wallet {
   uid String @unique @default(uuid())
 
   user     User?
+  userId   String?
   walletId String
-  balance  Int    @default(10000000) // In Kobo
+  balance  Int     @default(10000000) // In Kobo
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
