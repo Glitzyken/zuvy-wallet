@@ -1,11 +1,7 @@
 import { Request } from 'express';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-const User = prisma.user;
 
 export interface RequestInterface extends Request {
-  user: UserInterface;
+  user?: any;
 }
 
 export interface UserInterface {

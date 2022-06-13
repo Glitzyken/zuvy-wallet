@@ -1,12 +1,30 @@
 import { Request, Response } from 'express';
-// import { RequestInterface } from '../../../utils/interfaces';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+const Wallet = prisma.wallet;
 
 class WalletController {
-  public async createWallet(req: Request, res: Response) {
-    console.log('Creating wallet...');
+  public async fundWallet(req: Request, res: Response) {
+    const wallets = await Wallet.findMany();
 
-    res.status(201).json({
+    res.status(200).json({
       status: 'success',
+      data: {
+        wallets,
+      },
+    });
+  }
+
+  public async getAllWallets(req: Request, res: Response) {
+    // Typically an Admin route
+    const wallets = await Wallet.findMany();
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        wallets,
+      },
     });
   }
 }

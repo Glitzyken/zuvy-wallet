@@ -5,6 +5,8 @@ import catchAsync from '../../../utils/catchAsync';
 
 import * as userValidations from '../../../middlewares/validations/userValidation';
 import validationResults from '../../../middlewares/validations/validationResults';
+import getMe from '../../../middlewares/getMe';
+import protect from '../../../middlewares/protect';
 
 const router = express.Router();
 
@@ -20,5 +22,12 @@ router
     catchAsync(userValidations.passwordMiddleware),
     catchAsync(controller.signup),
   );
+
+router.use(catchAsync(protect));
+
+router.get('/me', getMe, catchAsync(controller.getOneUser));
+
+// Typical Admin routes
+router.route('/').get(controller.getAllUsers);
 
 export default router;

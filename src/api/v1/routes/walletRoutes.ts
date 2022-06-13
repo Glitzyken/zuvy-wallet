@@ -6,6 +6,7 @@ const router = express.Router();
 
 const controller = new WalletController();
 
-router.route('/').post(controller.createWallet);
+// Typical Admin routes
+router.route('/').get(controller.getAllWallets);
 
 export default router;
