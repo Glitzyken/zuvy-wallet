@@ -16,9 +16,9 @@ model User {
 
   firstName       String
   lastName        String
-  email           String @unique
+  email           String  @unique
   password        String
-  passwordConfirm String
+  passwordConfirm String?
 
   wallet   Wallet @relation(fields: [walletId], references: [uid])
   walletId String @unique

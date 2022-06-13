@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+// import { RequestInterface } from '../../../utils/interfaces';
 
 class WalletController {
   public async createWallet(req: Request, res: Response) {

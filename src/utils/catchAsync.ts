@@ -1,14 +1,13 @@
-import { NextFunction, Response } from 'express';
-import { RequestInterface } from './interfaces';
+import { NextFunction, Response, Request } from 'express';
 
 type ExpressFunc = (
-  req: RequestInterface,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => Promise<void>;
 
 export default (fn: ExpressFunc) => {
-  return (req: RequestInterface, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     fn(req, res, next).catch(next);
   };
 };

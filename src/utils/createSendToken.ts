@@ -7,12 +7,7 @@ const signToken = (id: string) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-export default (
-  user: UserInterface,
-  statusCode: number,
-  req: Request,
-  res: Response,
-) => {
+export default (user: any, statusCode: number, req: Request, res: Response) => {
   const token = signToken(user.uid);
 
   res.cookie('jwt', token, {
