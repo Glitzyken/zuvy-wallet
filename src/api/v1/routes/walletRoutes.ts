@@ -22,8 +22,6 @@ router
   .route('/transfer-fund')
   .post(transfer, validationResults, catchAsync(controller.transferFund));
 
-router.route('/my-transactions').get(catchAsync(controller.getMyTransactions));
-
 // Typical Admin routes
 router.route('/').get(catchAsync(controller.getAllWallets));
 

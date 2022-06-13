@@ -69,3 +69,16 @@ model Transaction {
 
   updatedAt DateTime @updatedAt
 }
+
+model PostTransaction {
+  id  Int    @id @default(autoincrement())
+  uid String @unique @default(uuid())
+
+  type            TRANSACTION_TYPE
+  amount          Int
+  date            DateTime
+  status          TRANSACTION_STATUS
+  userId          String
+  receiverDetails Json
+  peakHours       Boolean            @default(false)
+}

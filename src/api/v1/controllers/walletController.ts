@@ -139,19 +139,6 @@ class WalletController {
     }
   }
 
-  public async getMyTransactions(req: RequestInterface, res: Response) {
-    const userTransactions = await Transaction.findMany({
-      where: { userId: req.user.uid },
-    });
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        userTransactions,
-      },
-    });
-  }
-
   public async getAllWallets(req: Request, res: Response) {
     // Typically an Admin route
     const wallets = await Wallet.findMany();
