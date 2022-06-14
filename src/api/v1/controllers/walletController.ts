@@ -111,7 +111,11 @@ class WalletController {
   }
 
   public async findWalletUser(req: Request, res: Response, next: NextFunction) {
-    const { walletId }: FundWallet = req.params;
+    const { walletId }: FundWallet = req.query;
+
+    if (!walletId) {
+      return next(new AppError('Please, provide a wallet ID.', 400));
+    }
 
     const wallet = await Wallet.findFirst({
       where: { walletId },
@@ -139,12 +143,24 @@ class WalletController {
     }
   }
 
+  public async getMyWallet(req: RequestInterface, res: Response) {
+    const wallet = await Wallet.findFirst({ where: { userId: req.user.uid } });
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        wallet,
+      },
+    });
+  }
+
   public async getAllWallets(req: Request, res: Response) {
     // Typically an Admin route
     const wallets = await Wallet.findMany();
 
     res.status(200).json({
       status: 'success',
+      results: wallets.length,
       data: {
         wallets,
       },

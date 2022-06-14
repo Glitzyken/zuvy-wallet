@@ -17,10 +17,12 @@ router.use(catchAsync(protect));
 router
   .route('/fund-my-wallet')
   .patch(topUp, validationResults, catchAsync(controller.fundMyWallet));
-router.route('/find-user/:walletId').get(catchAsync(controller.findWalletUser));
+router.route('/find-user').get(catchAsync(controller.findWalletUser));
 router
   .route('/transfer-fund')
   .post(transfer, validationResults, catchAsync(controller.transferFund));
+
+router.route('/my-wallet').get(catchAsync(controller.getMyWallet));
 
 // Typical Admin routes
 router.route('/').get(catchAsync(controller.getAllWallets));
