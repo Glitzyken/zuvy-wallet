@@ -73,10 +73,29 @@ class WalletController {
           data: { balance: newSenderBalance },
         });
 
-        await Wallet.update({
-          where: { uid: receiverWallet.uid },
-          data: { balance: newReceiverBalance },
-        });
+        // if transaction fails, refund sender
+        try {
+          // throw new Error();
+
+          await Wallet.update({
+            where: { uid: receiverWallet.uid },
+            data: { balance: newReceiverBalance },
+          });
+        } catch (error) {
+          if (error) {
+            const balanceAfterRefund =
+              updatedSenderWallet.balance + amountInKobo;
+
+            await Wallet.update({
+              where: { uid: senderWallet.uid },
+              data: { balance: balanceAfterRefund },
+            });
+
+            return next(
+              new Error('Something went very wrong. Money refunded.'),
+            );
+          }
+        }
 
         // create a new transaction record
         const receiverDetails = {
