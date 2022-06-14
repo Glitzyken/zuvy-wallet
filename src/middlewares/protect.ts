@@ -14,8 +14,14 @@ export default async (
   res: Response,
   next: NextFunction,
 ) => {
+  const xApiKey = req.headers['x-api-key'];
   let token;
-  if (
+  let apiKey;
+  if (typeof xApiKey === 'string') {
+    if (xApiKey.startsWith('Zuvy')) {
+      apiKey = xApiKey;
+    }
+  } else if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
@@ -24,8 +30,18 @@ export default async (
     token = req.cookies.jwt;
   }
 
-  if (!token) {
-    return next(new AppError('No token provided.', 403));
+  if (!token && !apiKey) {
+    return next(new AppError('No token or API key provided.', 403));
+  }
+
+  if (apiKey) {
+    if (apiKey !== process.env.SECRET_KEY) {
+      return next(new AppError('Invalid API key. Access denied.', 403));
+    }
+
+    console.log('Access granted!!! 🥳🥳🥳🥳');
+
+    return next();
   }
 
   let verifiedToken;
@@ -34,13 +50,12 @@ export default async (
     verifiedToken = await verifyToken(token, process.env.JWT_SECRET as string);
   } catch (err) {
     return next(
-      new AppError('You are not logged in! Please log in to get access.', 401),
+      new AppError('Token expired! Please log in again to get access.', 401),
     );
   }
 
   if (Date.now() >= verifiedToken.exp * 1000) {
-    next(new AppError('Token expired.', 401));
-    return;
+    return next(new AppError('Token expired.', 401));
   }
 
   const currentUser = await UserModel.findFirst({
@@ -48,10 +63,9 @@ export default async (
   });
 
   if (!currentUser) {
-    next(
+    return next(
       new AppError('The user belonging to this token no longer exists.', 401),
     );
-    return;
   }
 
   req.user = currentUser;

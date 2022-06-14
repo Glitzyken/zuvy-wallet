@@ -10,9 +10,17 @@ const controller = new TransactionController();
 
 router.use(catchAsync(protect));
 
-router.route('/my-transactions').get(catchAsync(controller.getMyTransactions));
 router
   .route('/post-transactions')
-  .get(catchAsync(controller.getAllPostTransactions));
+  .get(catchAsync(controller.getAllPostTransactions))
+  .post(catchAsync(controller.bulkCreatePostTransactions));
+
+router
+  .route('/post-transactions/peak-hours')
+  .patch(catchAsync(controller.flagPostTransactions));
+
+router.route('/my-transactions').get(catchAsync(controller.getMyTransactions));
+
+router.route('/').get(catchAsync(controller.getAllTransactions));
 
 export default router;

@@ -22,6 +22,18 @@ export interface WalletInterface {
   balance: number;
 }
 
+export interface TransactionInterface {
+  id?: number;
+  uid?: string;
+  type?: string;
+  amount?: number;
+  date?: Date;
+  status?: string;
+  userId?: string;
+  receiverDetails?: object;
+  peakHours?: boolean;
+}
+
 export interface FundWallet {
   topUp?: number;
   walletId?: string;

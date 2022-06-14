@@ -21,6 +21,14 @@ router
     catchAsync(userValidations.passwordMiddleware),
     catchAsync(controller.signup),
   );
+router
+  .route('/login')
+  .post(
+    userValidations.loginCheck,
+    validationResults,
+    catchAsync(controller.login),
+  );
+router.route('/logout').get(catchAsync(controller.logout));
 
 router.use(catchAsync(protect));
 
