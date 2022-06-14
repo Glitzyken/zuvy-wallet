@@ -21,6 +21,9 @@ router
 
 router.route('/my-transactions').get(catchAsync(controller.getMyTransactions));
 
+router
+  .route('/special-filters')
+  .get(catchAsync(controller.getSpeciallyFilteredTransactions));
 router.route('/').get(catchAsync(controller.getAllTransactions));
 
 export default router;

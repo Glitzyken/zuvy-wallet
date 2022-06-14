@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import _ from 'lodash';
 
 import { RequestInterface } from '../../../utils/interfaces';
 
@@ -34,7 +35,7 @@ class TransactionController {
 
     res.status(200).json({
       status: 'success',
-      message: 'Set peak_hours to true.',
+      message: 'Set peak_hours.',
     });
   }
 
@@ -63,11 +64,38 @@ class TransactionController {
     });
   }
 
+  public async getSpeciallyFilteredTransactions(
+    req: RequestInterface,
+    res: Response,
+  ) {
+    // all transactions greater than #1,500 and carried out only between the hours of 7:00 AM and 3:00 PM
+    const transactions = await Transaction.findMany({
+      where: { amount: { gt: 150000 } },
+    });
+
+    const filteredTransactions = _.filter(transactions, function (tran) {
+      const tranHour = tran.date.getHours();
+
+      if (tranHour >= 7 && tranHour <= 15) {
+        return tran;
+      }
+    });
+
+    res.status(200).json({
+      status: 'success',
+      results: filteredTransactions.length,
+      data: {
+        filteredTransactions,
+      },
+    });
+  }
+
   public async getAllTransactions(req: RequestInterface, res: Response) {
     const transactions = await Transaction.findMany();
 
     res.status(200).json({
       status: 'success',
+      results: transactions.length,
       data: {
         transactions,
       },
