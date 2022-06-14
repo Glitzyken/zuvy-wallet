@@ -5,8 +5,9 @@
   "main": "server.js",
   "scripts": {
     "lint": "eslint . --fix",
-    "start": "rm -rf dist/ && tsc --project . && node dist/server.js",
-    "postinstall": "npx prisma generate && npx prisma migrate deploy",
+    "build": "rm -rf dist/ && tsc --project .",
+    "start": "node dist/server.js",
+    "postinstall": "npm run build && npx prisma generate && npx prisma migrate deploy",
     "migrate:deploy": "npx prisma generate && npx prisma migrate deploy",
     "dev": "nodemon .",
     "prisma:gui": "npx prisma studio --port 5555 --browser chrome",
